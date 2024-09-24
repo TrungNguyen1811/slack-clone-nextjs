@@ -20,10 +20,14 @@ interface SignInCardProps {
 export const SignInCard = ({ setState }: SignInCardProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [pending, setPending] = useState(false);
 
   const { signIn } = useAuthActions();
   const handleProviderSignIn = (value: "github" | "google") => {
-    signIn(value);
+    setPending(true);
+    signIn(value).finally(() => {
+      setPending(false);
+    });
   };
   return (
     <Card className="w-full h-full p-8">
@@ -37,7 +41,7 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
       <CardContent className="space-y-5 px-0 pb-0">
         <form className="space-y-2.5">
           <Input
-            disabled={false}
+            disabled={pending}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -47,7 +51,7 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
             required
           />
           <Input
-            disabled={false}
+            disabled={pending}
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -56,7 +60,7 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
             type="password"
             required
           />
-          <Button className="w-full" size="lg" type="submit" disabled={false}>
+          <Button className="w-full" size="lg" type="submit" disabled={pending}>
             Continue
           </Button>
         </form>
@@ -65,7 +69,7 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
           <Button
             className="w-full relative"
             onClick={() => handleProviderSignIn("google")}
-            disabled={false}
+            disabled={pending}
             size="lg"
             variant="outline"
           >
@@ -75,7 +79,7 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
           <Button
             className="w-full relative"
             onClick={() => handleProviderSignIn("github")}
-            disabled={false}
+            disabled={pending}
             size="lg"
             variant="outline"
           >
